@@ -3,8 +3,9 @@
 ## Current Shape
 
 - This is a `pnpm` workspace: `apps/*` and `packages/*` are workspace packages.
-- Only `packages/contracts` is implemented right now; `apps/web`, `apps/api`, `apps/worker`, `packages/database`, and `packages/shared` are placeholders until their own `package.json` files exist.
-- Root `dev:web`, `dev:api`, and `dev:worker` scripts already exist but will fail until the matching workspace packages are created.
+- Implemented packages: `packages/contracts`, `packages/database`, and `apps/api`.
+- `apps/web`, `apps/worker`, and `packages/shared` are still placeholders until their own `package.json` files exist.
+- Root `dev:web` and `dev:worker` scripts already exist but will fail until the matching workspace packages are created.
 
 ## Contract Package
 
@@ -21,6 +22,15 @@
 - Run one TypeScript contract test file: `pnpm --filter @blockforge/contracts exec hardhat test nodejs test/BlockForgeMarketplace.ts`.
 - Run Solidity contract tests only: `pnpm --filter @blockforge/contracts test:solidity`.
 - After ABI-changing Solidity edits, run `pnpm contracts:export-abi` to refresh `packages/contracts/exports/abis/*.json`.
+- API verification from root: `pnpm api:typecheck` and `pnpm api:build`.
+- Database commands from root: `pnpm db:generate`, `pnpm db:migrate`, `pnpm db:studio`.
+
+## API And Database
+
+- `apps/api` is a NestJS ESM package; relative TypeScript imports use `.js` suffixes for NodeNext output.
+- `apps/api` exposes Swagger docs at `/docs` and health at `/health`.
+- `packages/database` owns `prisma/schema.prisma`; API imports `PrismaClient` from `@blockforge/database`, so build/typecheck scripts build the database package first.
+- Prisma uses `DATABASE_URL`; see `apps/api/.env.example` and `packages/database/.env.example`.
 
 ## Deployment And Env
 

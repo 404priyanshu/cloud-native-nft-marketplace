@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+}
+
+model NftToken {
+  id              String   @id @default(cuid())
+  chainId         Int
+  contractAddress String
+  tokenId         String
+  ownerAddress    String?
+  tokenUri        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([chainId, contractAddress, tokenId])
+  @@index([ownerAddress])
+}
+
+model MarketplaceListing {
+  id                 String        @id @default(cuid())
+  chainId            Int
+  marketplaceAddress String
+  listingId          String
+  nftContractAddress String
+  tokenId            String
+  sellerAddress      String
+  buyerAddress       String?
+  priceWei           String
+  status             ListingStatus @default(ACTIVE)
+  listedTxHash       String?
+  soldTxHash         String?
+  cancelledTxHash    String?
+  listedAt           DateTime?
+  soldAt             DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@unique([chainId, marketplaceAddress, listingId])
+  @@index([chainId, status])
+  @@index([sellerAddress])
+  @@index([buyerAddress])
+}
+
+model MarketplaceEvent {
+  id              String   @id @default(cuid())
+  chainId         Int
+  contractAddress String
+  eventName       String
+  txHash          String
+  logIndex        Int
+  blockNumber     BigInt
+  blockTimestamp  DateTime?
+  payload         Json
+  createdAt       DateTime @default(now())
+
+  @@unique([chainId, txHash, logIndex])
+  @@index([chainId, contractAddress, eventName])
+}
+
+model IndexerCursor {
+  id              String   @id @default(cuid())
+  chainId         Int
+  contractAddress String
+  lastBlockNumber BigInt
+  updatedAt       DateTime @updatedAt
+
+  @@unique([chainId, contractAddress])
+}

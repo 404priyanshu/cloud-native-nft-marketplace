@@ -8,6 +8,11 @@
     "contracts:node": "pnpm --filter @blockforge/contracts node",
     "contracts:deploy": "pnpm --filter @blockforge/contracts deploy",
     "contracts:export-abi": "pnpm --filter @blockforge/contracts export:abi",
+    "api:build": "pnpm --filter @blockforge/api build",
+    "api:typecheck": "pnpm --filter @blockforge/api typecheck",
+    "db:generate": "pnpm --filter @blockforge/database generate",
+    "db:migrate": "pnpm --filter @blockforge/database migrate:dev",
+    "db:studio": "pnpm --filter @blockforge/database studio",
     "dev:web": "pnpm --filter @blockforge/web dev",
     "dev:api": "pnpm --filter @blockforge/api start:dev",
     "dev:worker": "pnpm --filter @blockforge/worker dev"
