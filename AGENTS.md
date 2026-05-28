@@ -42,4 +42,4 @@
 - Prisma schema is `packages/database/prisma/schema.prisma`; migrations live under `packages/database/prisma/migrations`.
 - Prisma uses `DATABASE_URL`; Redis uses `REDIS_URL`. Root `.env.example` has shared local defaults.
 - Backend and worker must not hold private keys; contract deployment uses Hardhat config variables like `SEPOLIA_RPC_URL` and `SEPOLIA_PRIVATE_KEY`.
-- Local Docker Compose only defines `postgres` and `redis`; it does not start API, worker, web, or a Hardhat node.
+- Docker Compose defines `postgres`, `redis`, and optional `api`/`worker` services; the worker profile still expects a separate local Hardhat node/RPC.

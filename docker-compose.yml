@@ -1,4 +1,52 @@
 services:
+  api:
+    build:
+      args:
+        APP_FILTER: "@blockforge/api"
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AUTH_NONCE_TTL_SECONDS: 300
+      CORS_ORIGIN: "*"
+      DATABASE_URL: "postgresql://blockforge:blockforge@postgres:5432/blockforge?schema=public"
+      JWT_EXPIRES_IN_SECONDS: 3600
+      JWT_SECRET: "blockforge-local-docker-secret"
+      PORT: 3001
+      REDIS_URL: "redis://redis:6379"
+      S3_BUCKET: ""
+      UPLOAD_URL_TTL_SECONDS: 300
+    ports:
+      - "3001:3001"
+
+  worker:
+    build:
+      args:
+        APP_FILTER: "@blockforge/worker"
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      CHAIN_ID: 31337
+      DATABASE_URL: "postgresql://blockforge:blockforge@postgres:5432/blockforge?schema=public"
+      INDEXER_BLOCK_RANGE: 1000
+      INDEXER_LOCK_TTL_MS: 30000
+      INDEXER_POLL_INTERVAL_MS: 5000
+      INDEXER_START_BLOCK: 0
+      MARKETPLACE_CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000"
+      NETWORK_NAME: "local"
+      NFT_CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000"
+      REDIS_URL: "redis://redis:6379"
+      RPC_URL: "http://host.docker.internal:8545"
+    profiles:
+      - worker
+
   postgres:
     image: postgres:17-alpine
     environment:

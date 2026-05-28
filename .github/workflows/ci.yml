@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.4.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+          node-version: 22
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: API tests
+        run: pnpm --filter @blockforge/api test
+
+      - name: API typecheck
+        run: pnpm api:typecheck
+
+      - name: API build
+        run: pnpm api:build
+
+      - name: Worker tests
+        run: pnpm worker:test
+
+      - name: Worker typecheck
+        run: pnpm worker:typecheck
+
+      - name: Worker build
+        run: pnpm worker:build
+
+      - name: Database typecheck
+        run: pnpm --filter @blockforge/database typecheck
+
+      - name: Contract TypeScript tests
+        run: pnpm --filter @blockforge/contracts test:node
