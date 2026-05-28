@@ -12,7 +12,7 @@
 
 - Install/update workspace deps with `pnpm install`; the lockfile is `pnpm-lock.yaml`.
 - Local Postgres/Redis: `pnpm infra:up`, `pnpm infra:down`, `pnpm infra:logs`.
-- API: `pnpm dev:api`, `pnpm api:typecheck`, `pnpm api:build`.
+- API: `pnpm dev:api`, `pnpm --filter @blockforge/api test`, `pnpm api:typecheck`, `pnpm api:build`.
 - Worker: `pnpm dev:worker`, `pnpm worker:test`, `pnpm worker:typecheck`, `pnpm worker:build`.
 - Database: `pnpm db:generate`, `pnpm db:migrate`, `pnpm db:studio`.
 - Shared package: `pnpm shared:typecheck`, `pnpm shared:build`.
@@ -31,6 +31,7 @@
 
 - `apps/api` is NestJS ESM/NodeNext; relative TypeScript imports need `.js` suffixes for compiled output.
 - API loads dotenv in `src/main.ts`, serves health at `/health`, and Swagger at `/docs`.
+- API wallet auth uses Redis nonces and JWTs; `POST /upload/presigned-url` requires S3 env vars but never proxies file bytes.
 - Read APIs expose indexed data at `/nfts`, `/listings`, and `/transactions`; legacy `/marketplace/listings` and `/marketplace/transactions` still exist.
 - `apps/worker` is a read-only blockchain event indexer. It reads `NFTMinted`, `NFTListed`, `NFTSold`, and `ListingCancelled`, writes idempotent rows to PostgreSQL, and uses Redis as a short-lived lock.
 - Worker requires `RPC_URL`, `CHAIN_ID`, `NFT_CONTRACT_ADDRESS`, `MARKETPLACE_CONTRACT_ADDRESS`, `DATABASE_URL`, and `REDIS_URL`; see `.env.example` and `apps/worker/.env.example`.
