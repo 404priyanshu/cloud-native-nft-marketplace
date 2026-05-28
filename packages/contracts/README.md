@@ -21,6 +21,7 @@ pnpm contracts:compile
 pnpm contracts:test
 pnpm contracts:node
 pnpm contracts:deploy
+pnpm contracts:export-abi
 ```
 
 Or from this package directory:
@@ -31,6 +32,7 @@ pnpm test
 pnpm test:solidity
 pnpm test:node
 pnpm deploy
+pnpm export:abi
 ```
 
 ## Sepolia deployment
@@ -53,6 +55,11 @@ Then deploy with:
 pnpm deploy:sepolia
 ```
 
-## Current scaffold
+## Contracts
 
-The package currently includes a sample `Counter` contract, matching TypeScript tests, Solidity tests, and an Ignition deployment module. Replace these with marketplace contracts as the domain model is finalized.
+- `BlockForgeNFT`: ERC-721 token with token URI storage and public minting for marketplace demos.
+- `BlockForgeMarketplace`: fixed-price marketplace with escrowed listings, cancellation, purchases, and platform fees.
+
+The Ignition module in `ignition/modules/BlockForgeMarketplace.ts` deploys both contracts.
+
+Run `pnpm export:abi` after ABI-changing contract edits to refresh `exports/abis/*.json` for app packages.

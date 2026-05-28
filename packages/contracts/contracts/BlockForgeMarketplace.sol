@@ -39,16 +39,29 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
         uint256 indexed listingId,
         address indexed buyer,
         address indexed seller,
+        address nftContract,
+        uint256 tokenId,
         uint256 price
     );
 
-    event ListingCancelled(uint256 indexed listingId, address indexed seller);
+    event ListingCancelled(
+        uint256 indexed listingId,
+        address indexed seller,
+        address indexed nftContract,
+        uint256 tokenId
+    );
+
+    event PlatformFeeUpdated(uint256 previousFeeBps, uint256 newFeeBps);
 
     error PriceMustBeAboveZero();
     error NotTokenOwner();
     error NotListingSeller();
     error ListingNotActive();
     error IncorrectPayment();
+    error ListingDoesNotExist();
+    error InvalidNFTContract();
+    error PlatformFeeTooHigh();
+    error EthTransferFailed(address recipient, uint256 amount);
 
     constructor() Ownable(msg.sender) {}
 
@@ -58,6 +71,9 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
         uint256 price
     ) external nonReentrant {
         if (price == 0) revert PriceMustBeAboveZero();
+        if (nftContract == address(0) || nftContract.code.length == 0) {
+            revert InvalidNFTContract();
+        }
 
         IERC721 nft = IERC721(nftContract);
 
@@ -84,6 +100,10 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
     function buyNFT(uint256 listingId) external payable nonReentrant {
         Listing storage listing = listings[listingId];
 
+        if (listing.seller == address(0)) {
+            revert ListingDoesNotExist();
+        }
+
         if (listing.status != ListingStatus.Active) {
             revert ListingNotActive();
         }
@@ -97,8 +117,11 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
         uint256 fee = (msg.value * platformFeeBps) / 10_000;
         uint256 sellerAmount = msg.value - fee;
 
-        payable(listing.seller).transfer(sellerAmount);
-        payable(owner()).transfer(fee);
+        _sendValue(listing.seller, sellerAmount);
+
+        if (fee > 0) {
+            _sendValue(owner(), fee);
+        }
 
         IERC721(listing.nftContract).safeTransferFrom(
             address(this),
@@ -106,11 +129,22 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
             listing.tokenId
         );
 
-        emit NFTSold(listingId, msg.sender, listing.seller, listing.price);
+        emit NFTSold(
+            listingId,
+            msg.sender,
+            listing.seller,
+            listing.nftContract,
+            listing.tokenId,
+            listing.price
+        );
     }
 
     function cancelListing(uint256 listingId) external nonReentrant {
         Listing storage listing = listings[listingId];
+
+        if (listing.seller == address(0)) {
+            revert ListingDoesNotExist();
+        }
 
         if (listing.status != ListingStatus.Active) {
             revert ListingNotActive();
@@ -128,12 +162,29 @@ contract BlockForgeMarketplace is IERC721Receiver, ReentrancyGuard, Ownable {
             listing.tokenId
         );
 
-        emit ListingCancelled(listingId, msg.sender);
+        emit ListingCancelled(
+            listingId,
+            msg.sender,
+            listing.nftContract,
+            listing.tokenId
+        );
     }
 
     function updatePlatformFee(uint256 newFeeBps) external onlyOwner {
-        require(newFeeBps <= 1000, "Fee too high");
+        if (newFeeBps > 1000) revert PlatformFeeTooHigh();
+
+        uint256 previousFeeBps = platformFeeBps;
         platformFeeBps = newFeeBps;
+
+        emit PlatformFeeUpdated(previousFeeBps, newFeeBps);
+    }
+
+    function _sendValue(address recipient, uint256 amount) private {
+        (bool success, ) = payable(recipient).call{value: amount}("");
+
+        if (!success) {
+            revert EthTransferFailed(recipient, amount);
+        }
     }
 
     function onERC721Received(

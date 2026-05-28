@@ -7,6 +7,7 @@
     "contracts:test": "pnpm --filter @blockforge/contracts test",
     "contracts:node": "pnpm --filter @blockforge/contracts node",
     "contracts:deploy": "pnpm --filter @blockforge/contracts deploy",
+    "contracts:export-abi": "pnpm --filter @blockforge/contracts export:abi",
     "dev:web": "pnpm --filter @blockforge/web dev",
     "dev:api": "pnpm --filter @blockforge/api start:dev",
     "dev:worker": "pnpm --filter @blockforge/worker dev"
