@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./abis/BlockForgeMarketplace.json": "./exports/abis/BlockForgeMarketplace.json",
+    "./abis/BlockForgeNFT.json": "./exports/abis/BlockForgeNFT.json"
+  },
   "scripts": {
     "build": "hardhat build",
     "compile": "hardhat compile",
@@ -12,8 +16,10 @@
     "test:node": "hardhat test nodejs",
     "node": "hardhat node",
     "deploy": "hardhat ignition deploy ignition/modules/BlockForgeMarketplace.ts",
+    "deploy:local": "hardhat ignition deploy --network localhost --reset ignition/modules/BlockForgeMarketplace.ts",
     "deploy:sepolia": "hardhat ignition deploy --network sepolia ignition/modules/BlockForgeMarketplace.ts",
     "export:abi": "hardhat build && hardhat run scripts/export-abis.ts",
+    "seed:local": "hardhat run --network localhost scripts/seed-local-events.ts",
     "send-op-tx": "hardhat run scripts/send-op-tx.ts",
     "typecheck": "hardhat build && tsc --noEmit"
   },

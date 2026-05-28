@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 
 import { PrismaService } from "../prisma/prisma.service.js";
 
@@ -36,6 +41,39 @@ export class MarketplaceService {
     });
   }
 
+  async getListing(id: string) {
+    const listing = await this.prisma.marketplaceListing.findFirst({
+      where: {
+        OR: [{ id }, { listingId: id }],
+      },
+    });
+
+    if (!listing) {
+      throw new NotFoundException("Listing not found");
+    }
+
+    return listing;
+  }
+
+  async listNfts() {
+    return this.prisma.nftToken.findMany({
+      orderBy: [{ createdAt: "desc" }],
+      take: 50,
+    });
+  }
+
+  async getNft(id: string) {
+    const nft = await this.prisma.nftToken.findUnique({
+      where: { id },
+    });
+
+    if (!nft) {
+      throw new NotFoundException("NFT not found");
+    }
+
+    return nft;
+  }
+
   async listTransactions() {
     const events = await this.prisma.marketplaceEvent.findMany({
       orderBy: [{ blockNumber: "desc" }, { logIndex: "desc" }],
@@ -46,5 +84,21 @@ export class MarketplaceService {
       ...event,
       blockNumber: event.blockNumber.toString(),
     }));
+  }
+
+  async getTransaction(txHash: string) {
+    const event = await this.prisma.marketplaceEvent.findFirst({
+      orderBy: [{ logIndex: "asc" }],
+      where: { txHash },
+    });
+
+    if (!event) {
+      throw new NotFoundException("Transaction not found");
+    }
+
+    return {
+      ...event,
+      blockNumber: event.blockNumber.toString(),
+    };
   }
 }

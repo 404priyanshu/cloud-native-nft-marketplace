@@ -19,12 +19,17 @@ model NftToken {
   contractAddress String
   tokenId         String
   ownerAddress    String?
+  creatorAddress  String?
   tokenUri        String?
+  imageUrl        String?
+  name            String?
+  description     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@unique([chainId, contractAddress, tokenId])
   @@index([ownerAddress])
+  @@index([creatorAddress])
 }
 
 model MarketplaceListing {

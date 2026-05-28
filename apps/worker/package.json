@@ -1,0 +1,26 @@
+{
+  "name": "@blockforge/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "pnpm --filter @blockforge/database build && pnpm --filter @blockforge/shared build && tsc -p tsconfig.build.json",
+    "dev": "pnpm --filter @blockforge/database build && pnpm --filter @blockforge/shared build && tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "test": "node --test --import tsx \"src/**/*.test.ts\"",
+    "typecheck": "pnpm --filter @blockforge/database build && pnpm --filter @blockforge/shared build && tsc --noEmit"
+  },
+  "dependencies": {
+    "@blockforge/database": "workspace:*",
+    "@blockforge/shared": "workspace:*",
+    "dotenv": "^16.6.1",
+    "ioredis": "^5.8.2",
+    "viem": "^2.51.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.19",
+    "tsx": "^4.20.0",
+    "typescript": "~6.0.3"
+  }
+}
