@@ -1,0 +1,28 @@
+cat > .gitignore <<'EOF'
+node_modules
+.env
+.env.local
+.env.*.local
+
+dist
+build
+.next
+out
+
+coverage
+.cache
+.turbo
+
+.DS_Store
+
+# Hardhat
+artifacts
+cache
+ignition/deployments
+
+# Prisma
+packages/database/generated
+
+# Logs
+*.log
+EOF

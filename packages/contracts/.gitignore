@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Hardhat build artifacts
+artifacts/
+cache/
+coverage/
+coverage.json
+
+# Hardhat Ignition deployments
+ignition/deployments/
+
+# TypeScript output
+/dist/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# macOS
+.DS_Store

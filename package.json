@@ -1,0 +1,14 @@
+{
+  "name": "cloud-native-nft-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "contracts:compile": "pnpm --filter @blockforge/contracts compile",
+    "contracts:test": "pnpm --filter @blockforge/contracts test",
+    "contracts:node": "pnpm --filter @blockforge/contracts node",
+    "contracts:deploy": "pnpm --filter @blockforge/contracts deploy",
+    "dev:web": "pnpm --filter @blockforge/web dev",
+    "dev:api": "pnpm --filter @blockforge/api start:dev",
+    "dev:worker": "pnpm --filter @blockforge/worker dev"
+  }
+}

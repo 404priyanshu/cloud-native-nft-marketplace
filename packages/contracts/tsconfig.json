@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "node20",
+
+    "target": "es2023",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"],
+  },
+  "include": ["hardhat.config.ts", "ignition/**/*.ts", "scripts/**/*.ts", "test/**/*.ts"],
+}
