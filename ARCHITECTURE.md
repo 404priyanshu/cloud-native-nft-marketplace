@@ -4,44 +4,7 @@ This document describes the technical architecture of BlockForge, a cloud-native
 
 ## High-Level Architecture
 
-```
-                                    ┌─────────────────┐
-                                    │   User Browser   │
-                                    └────────┬────────┘
-                                             │
-                         ┌───────────────────┼───────────────────┐
-                         │                   │                   │
-                         ▼                   ▼                   │
-               ┌──────────────┐    ┌──────────────┐            │
-               │   Next.js    │    │   Wallet      │            │
-               │   Frontend   │    │ (MetaMask /   │            │
-               │              │    │  RainbowKit)  │            │
-               └──────┬───────┘    └──────┬────────┘            │
-                      │                   │                      │
-          API reads   │                   │  Signed transactions │
-                      ▼                   ▼                      │
-               ┌──────────────┐    ┌──────────────────┐         │
-               │   NestJS     │    │    Ethereum       │         │
-               │   REST API   │    │    Blockchain     │         │
-               │   (port 3001)│    │                   │         │
-               └──────┬───────┘    │ ┌──────────────┐  │         │
-                      │            │ │BlockForgeNFT │  │         │
-                      │            │ │  (ERC-721)   │  │         │
-               ┌──────┴──────┐    │ └──────────────┘  │         │
-               │             │    │ ┌──────────────────┤         │
-               ▼             ▼    │ │BlockForge        │         │
-        ┌──────────┐  ┌─────────┐ │ │Marketplace       │         │
-        │PostgreSQL│  │  Redis  │ │ │(Escrow + Fees)   │         │
-        │ (Read    │  │ (Nonces │ │ └──────────────────┘         │
-        │  Index)  │  │  Locks) │ └──────────┬──────────┘         │
-        └──────┬───┘  └─────────┘            │                   │
-               ▲                              │  Event polling    │
-               │                              ▼                   │
-               │                    ┌──────────────┐              │
-               └────────────────────│   Worker     │              │
-                 Idempotent upserts │  (Indexer)   │              │
-                                    └──────────────┘              │
-```
+![BlockForge High-Level Architecture Diagram](docs/images/architecture_diagram.png)
 
 ## Data Flow
 

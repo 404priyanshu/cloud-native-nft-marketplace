@@ -11,23 +11,7 @@ A full-stack, cloud-native NFT marketplace demonstrating production-grade archit
 
 ## Architecture Overview
 
-```
-┌────────────┐     ┌─────────────┐     ┌──────────┐     ┌──────────┐
-│  Frontend  │────▶│   REST API  │────▶│ Postgres │◀────│  Worker  │
-│  (Next.js) │     │  (NestJS)   │     │  (Read   │     │ (Indexer)│
-│            │     │             │     │   Index)  │     │          │
-└─────┬──────┘     └──────┬──────┘     └──────────┘     └────┬─────┘
-      │                   │                                   │
-      │  Wallet writes    │  Redis                           │  Event polling
-      ▼                   ▼                                   ▼
-┌────────────────────────────────────────────────────────────────────┐
-│                        Ethereum Blockchain                         │
-│  ┌──────────────┐    ┌──────────────────────┐                     │
-│  │ BlockForgeNFT│    │BlockForgeMarketplace  │                    │
-│  │   (ERC-721)  │    │  (Fixed-Price Escrow) │                    │
-│  └──────────────┘    └──────────────────────┘                     │
-└────────────────────────────────────────────────────────────────────┘
-```
+![BlockForge Architecture Diagram](docs/images/architecture_diagram.png)
 
 **Key design principle:** The blockchain is the source of truth. The database is a read-optimized index rebuilt by an idempotent event indexer. The frontend reads from the API and writes directly to the blockchain via wallet transactions.
 
