@@ -3,8 +3,8 @@
 ## Workspace Shape
 
 - `pnpm` workspace packages are `apps/*` and `packages/*`; use filtered commands instead of running package tools from random directories.
-- Implemented packages: `packages/contracts`, `packages/database`, `packages/shared`, `apps/api`, and `apps/worker`.
-- `apps/web` is still a placeholder; root `dev:web` exists but will fail until `@blockforge/web` gets a `package.json`.
+- Implemented packages: `packages/contracts`, `packages/database`, `packages/shared`, `apps/api`, `apps/worker`, and `apps/web`.
+- `apps/web` is a Next.js 16 app with RainbowKit/wagmi; run it with `pnpm dev:web`, and verify with `pnpm web:lint`, `pnpm web:typecheck`, and `pnpm web:build`.
 - `packages/database` owns Prisma schema/client generation; API and worker build it first and import Prisma from `@blockforge/database`.
 - `packages/shared` imports exported contract ABIs from `@blockforge/contracts/abis/*.json`; after ABI-changing Solidity edits, run `pnpm contracts:export-abi`.
 
@@ -16,6 +16,7 @@
 - Worker: `pnpm dev:worker`, `pnpm worker:test`, `pnpm worker:typecheck`, `pnpm worker:build`.
 - Database: `pnpm db:generate`, `pnpm db:migrate`, `pnpm db:studio`.
 - Shared package: `pnpm shared:typecheck`, `pnpm shared:build`.
+- Frontend: `pnpm dev:web`, `pnpm web:lint`, `pnpm web:typecheck`, `pnpm web:build`.
 - Contracts: `pnpm contracts:compile`, `pnpm contracts:test`, `pnpm contracts:node`, `pnpm contracts:deploy` (deploys to `localhost`), `pnpm contracts:seed-local`, `pnpm contracts:export-abi`.
 
 ## Contracts
@@ -43,3 +44,4 @@
 - Prisma uses `DATABASE_URL`; Redis uses `REDIS_URL`. Root `.env.example` has shared local defaults.
 - Backend and worker must not hold private keys; contract deployment uses Hardhat config variables like `SEPOLIA_RPC_URL` and `SEPOLIA_PRIVATE_KEY`.
 - Docker Compose defines `postgres`, `redis`, and optional `api`/`worker` services; the worker profile still expects a separate local Hardhat node/RPC.
+- `infra/terraform` is an AWS scaffold for ECS/RDS/ElastiCache/S3/ALB/ECR. Validate with `terraform -chdir=infra/terraform fmt -check` and `terraform -chdir=infra/terraform validate` when Terraform is installed.

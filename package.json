@@ -24,6 +24,9 @@
     "infra:logs": "docker compose logs -f postgres redis",
     "dev:web": "pnpm --filter @blockforge/web dev",
     "dev:api": "pnpm --filter @blockforge/api start:dev",
-    "dev:worker": "pnpm --filter @blockforge/worker dev"
+    "dev:worker": "pnpm --filter @blockforge/worker dev",
+    "web:build": "pnpm --filter @blockforge/web build",
+    "web:typecheck": "pnpm --filter @blockforge/web typecheck",
+    "web:lint": "pnpm --filter @blockforge/web lint"
   }
 }

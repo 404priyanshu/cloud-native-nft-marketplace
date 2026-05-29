@@ -19,8 +19,15 @@ services:
       REDIS_URL: "redis://redis:6379"
       S3_BUCKET: ""
       UPLOAD_URL_TTL_SECONDS: 300
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     ports:
       - "3001:3001"
+    restart: unless-stopped
 
   worker:
     build:
@@ -46,6 +53,7 @@ services:
       RPC_URL: "http://host.docker.internal:8545"
     profiles:
       - worker
+    restart: unless-stopped
 
   postgres:
     image: postgres:17-alpine
@@ -62,6 +70,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -75,6 +84,7 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    restart: unless-stopped
 
 volumes:
   postgres-data:

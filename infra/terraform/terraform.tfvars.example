@@ -1,0 +1,29 @@
+aws_region       = "us-east-1"
+environment      = "staging"
+project_name     = "blockforge"
+
+# Networking
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+# Database (use larger instances for production)
+db_instance_class = "db.t4g.micro"
+db_name           = "blockforge"
+db_username       = "blockforge"
+
+# Redis
+redis_node_type = "cache.t4g.micro"
+
+# ECS (adjust for production workloads)
+api_cpu           = 256
+api_memory        = 512
+worker_cpu        = 256
+worker_memory     = 512
+api_desired_count = 1
+api_port          = 3001
+
+# Application — fill these in after contract deployment
+chain_id                     = 11155111 # Sepolia
+rpc_url                      = ""       # e.g. https://sepolia.infura.io/v3/YOUR_KEY
+nft_contract_address         = ""
+marketplace_contract_address = ""

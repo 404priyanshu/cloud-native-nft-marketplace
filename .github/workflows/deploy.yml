@@ -1,0 +1,114 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    outputs:
+      api_image: ${{ steps.meta-api.outputs.image }}
+      worker_image: ${{ steps.meta-worker.outputs.image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tags
+        id: meta-api
+        run: |
+          IMAGE="${{ steps.ecr-login.outputs.registry }}/blockforge-api:${{ github.sha }}"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Set worker image tags
+        id: meta-worker
+        run: |
+          IMAGE="${{ steps.ecr-login.outputs.registry }}/blockforge-worker:${{ github.sha }}"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: APP_FILTER=@blockforge/api
+          tags: |
+            ${{ steps.meta-api.outputs.image }}
+            ${{ steps.ecr-login.outputs.registry }}/blockforge-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: APP_FILTER=@blockforge/worker
+          tags: |
+            ${{ steps.meta-worker.outputs.image }}
+            ${{ steps.ecr-login.outputs.registry }}/blockforge-worker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-push
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    steps:
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update API ECS service
+        run: |
+          aws ecs update-service \
+            --cluster blockforge-${{ github.event.inputs.environment || 'staging' }} \
+            --service blockforge-api \
+            --force-new-deployment
+
+      - name: Update Worker ECS service
+        run: |
+          aws ecs update-service \
+            --cluster blockforge-${{ github.event.inputs.environment || 'staging' }} \
+            --service blockforge-worker \
+            --force-new-deployment
+
+      - name: Wait for API deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster blockforge-${{ github.event.inputs.environment || 'staging' }} \
+            --services blockforge-api \
+            --timeout 300
