@@ -64,9 +64,11 @@ log "Deploying contracts..."
 DEPLOY_OUTPUT=$(pnpm contracts:deploy 2>&1)
 echo "$DEPLOY_OUTPUT"
 
-# Extract contract addresses from deployment output
-NFT_ADDR=$(echo "$DEPLOY_OUTPUT" | grep -oE '0x[a-fA-F0-9]{40}' | head -1)
-MARKETPLACE_ADDR=$(echo "$DEPLOY_OUTPUT" | grep -oE '0x[a-fA-F0-9]{40}' | tail -1)
+DEPLOYED_ADDRESSES="packages/contracts/ignition/deployments/chain-31337/deployed_addresses.json"
+
+# Read contract addresses from Ignition's canonical deployment artifact.
+NFT_ADDR=$(node -e "const deployed = require('./$DEPLOYED_ADDRESSES'); console.log(deployed['BlockForgeMarketplaceModule#BlockForgeNFT'] || '')")
+MARKETPLACE_ADDR=$(node -e "const deployed = require('./$DEPLOYED_ADDRESSES'); console.log(deployed['BlockForgeMarketplaceModule#BlockForgeMarketplace'] || '')")
 
 if [ -z "$NFT_ADDR" ] || [ -z "$MARKETPLACE_ADDR" ]; then
   warn "Could not auto-detect contract addresses. Check deployment output above."
@@ -75,10 +77,14 @@ else
   ok "Contracts deployed: NFT=$NFT_ADDR, Marketplace=$MARKETPLACE_ADDR"
 
   # Update env files with deployed addresses
-  for envfile in .env apps/worker/.env; do
+  cp -n .env apps/web/.env.local 2>/dev/null || true
+
+  for envfile in .env apps/worker/.env apps/web/.env.local; do
     if [ -f "$envfile" ]; then
       sed -i.bak "s|NFT_CONTRACT_ADDRESS=.*|NFT_CONTRACT_ADDRESS=\"$NFT_ADDR\"|" "$envfile"
       sed -i.bak "s|MARKETPLACE_CONTRACT_ADDRESS=.*|MARKETPLACE_CONTRACT_ADDRESS=\"$MARKETPLACE_ADDR\"|" "$envfile"
+      sed -i.bak "s|NEXT_PUBLIC_NFT_CONTRACT_ADDRESS=.*|NEXT_PUBLIC_NFT_CONTRACT_ADDRESS=\"$NFT_ADDR\"|" "$envfile"
+      sed -i.bak "s|NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=.*|NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS=\"$MARKETPLACE_ADDR\"|" "$envfile"
       rm -f "${envfile}.bak"
     fi
   done

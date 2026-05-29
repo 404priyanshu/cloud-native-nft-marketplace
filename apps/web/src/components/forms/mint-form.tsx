@@ -16,6 +16,7 @@ export function MintForm() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFileName, setImageFileName] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -24,6 +25,7 @@ export function MintForm() {
 
   const handleFileSelect = (file: File) => {
     if (!file.type.startsWith("image/")) return;
+    setImageFileName(file.name);
     const reader = new FileReader();
     reader.onloadend = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -40,13 +42,24 @@ export function MintForm() {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const metadata = JSON.stringify({
+    const metadata = {
       name: name.trim(),
       description: description.trim(),
-      image: imagePreview || "",
-    });
+      image: "",
+      properties: imageFileName
+        ? {
+            localPreviewFileName: imageFileName,
+            note: "Image bytes are preview-only in local MVP; production upload uses off-chain storage.",
+          }
+        : undefined,
+    };
 
-    const tokenURI = `data:application/json;base64,${btoa(metadata)}`;
+    const json = JSON.stringify(metadata);
+    const bytes = new TextEncoder().encode(json);
+    const binary = Array.from(bytes, (byte) =>
+      String.fromCharCode(byte),
+    ).join("");
+    const tokenURI = `data:application/json;base64,${btoa(binary)}`;
     mint(tokenURI);
   };
 
@@ -75,6 +88,7 @@ export function MintForm() {
               setName("");
               setDescription("");
               setImagePreview(null);
+              setImageFileName(null);
             }}
             className="btn-secondary"
           >
@@ -106,6 +120,10 @@ export function MintForm() {
               type="button"
               onClick={() => {
                 setImagePreview(null);
+                setImageFileName(null);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
               }}
               className="absolute top-4 right-4 p-1.5 rounded-full bg-white/90 hover:bg-white border border-slate-100 text-slate-500 hover:text-rose-500 transition-colors shadow-md"
             >
@@ -132,7 +150,7 @@ export function MintForm() {
               Drag & drop dynamic files, or click to browse
             </p>
             <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1.5">
-              PNG, JPG, GIF, SVG, WEBP (MAX 10MB)
+              Preview only; uploaded bytes are not stored on-chain
             </p>
           </div>
         )}
@@ -180,6 +198,16 @@ export function MintForm() {
       </div>
 
       {/* Error */}
+      {imagePreview && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-amber-100 bg-amber-50 p-3.5 text-xs text-amber-700">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <span className="font-medium">
+            Local MVP stores compact JSON metadata on-chain. The selected image
+            is only a browser preview until S3 upload is wired.
+          </span>
+        </div>
+      )}
+
       {error && (
         <div className="flex items-start gap-2.5 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl p-3.5">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-rose-500" />
