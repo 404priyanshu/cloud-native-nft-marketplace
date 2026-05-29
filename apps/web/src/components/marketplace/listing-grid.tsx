@@ -3,6 +3,7 @@
 import type { MarketplaceListing } from "@/types/api";
 import { ListingCard } from "./listing-card";
 import { ShoppingBag } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ListingGridProps {
   listings: MarketplaceListing[];
@@ -27,9 +28,9 @@ export function ListingGrid({
 
   if (listings.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[var(--color-foreground-muted)]">
-        <ShoppingBag className="w-12 h-12 mb-4 opacity-40" />
-        <p className="text-lg">{emptyMessage}</p>
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-card/42 py-20 text-muted-foreground">
+        <ShoppingBag className="opacity-50" />
+        <p className="text-center text-sm">{emptyMessage}</p>
       </div>
     );
   }
@@ -51,11 +52,11 @@ export function ListingGrid({
 
 function SkeletonCard() {
   return (
-    <div className="glass overflow-hidden">
-      <div className="aspect-square skeleton" />
-      <div className="p-4 space-y-3">
-        <div className="skeleton h-5 w-1/2 rounded" />
-        <div className="skeleton h-3 w-2/3 rounded" />
+    <div className="overflow-hidden rounded-xl border border-border bg-card/72">
+      <Skeleton className="aspect-[4/3] rounded-none" />
+      <div className="flex flex-col gap-3 p-4">
+        <Skeleton className="h-5 w-1/2" />
+        <Skeleton className="h-3 w-2/3" />
       </div>
     </div>
   );

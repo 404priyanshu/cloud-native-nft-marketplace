@@ -44,13 +44,13 @@ export function ListForm({ nft }: ListFormProps) {
 
   if (isListed) {
     return (
-      <div className="text-center py-4 animate-fade-in font-sans">
-        <CheckCircle2 className="w-8 h-8 text-[var(--color-cyber-cyan)] mx-auto mb-3 animate-pulse" />
-        <p className="font-display font-bold text-white mb-1">Decentralized Escrow Staged!</p>
-        <p className="text-xs text-gray-400">
-          Your specimen is now listed for trading on the public ledger.
+      <div className="text-center py-6 animate-fade-in font-sans">
+        <CheckCircle2 className="w-8 h-8 text-indigo-600 mx-auto mb-3" />
+        <p className="font-display font-extrabold text-slate-900 mb-1">Escrow Listing Established!</p>
+        <p className="text-xs text-slate-500 max-w-xs mx-auto">
+          Your NFT is now staged in the marketplace contract and listed for public trade.
         </p>
-        <button onClick={reset} className="btn-secondary mt-4 text-xs font-bold uppercase tracking-wider">
+        <button onClick={reset} className="btn-secondary mt-4 text-xs font-semibold uppercase tracking-wider">
           Done
         </button>
       </div>
@@ -68,7 +68,7 @@ export function ListForm({ nft }: ListFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4 font-sans">
       {/* Price Input */}
       <div>
-        <label htmlFor="listing-price" className="block text-xs font-display font-bold uppercase tracking-widest mb-2 text-gray-300">
+        <label htmlFor="listing-price" className="block text-[10px] font-mono font-bold uppercase tracking-wider mb-2 text-slate-400">
           Listing Price (ETH)
         </label>
         <div className="relative">
@@ -84,7 +84,7 @@ export function ListForm({ nft }: ListFormProps) {
             disabled={currentStep > 0}
             className="input pr-14"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-[var(--color-cyber-cyan)]">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-indigo-600">
             ETH
           </span>
         </div>
@@ -92,7 +92,7 @@ export function ListForm({ nft }: ListFormProps) {
 
       {/* Step Indicator */}
       {currentStep > 0 && (
-        <div className="space-y-2.5 text-xs py-3 border-t border-b border-[var(--color-border)] my-4">
+        <div className="space-y-3 text-xs py-4 border-t border-b border-slate-100/60 my-4">
           <StepLine
             step={1}
             label="Approve ERC-721 Custody"
@@ -110,9 +110,9 @@ export function ListForm({ nft }: ListFormProps) {
 
       {/* Error */}
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-200 bg-[rgba(239,68,68,0.1)] border border-red-900/50 rounded-lg p-3">
-          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-red-400" />
-          <span>{error.message}</span>
+        <div className="flex items-start gap-2.5 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl p-3.5">
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-rose-500" />
+          <span className="font-medium">{error.message}</span>
         </div>
       )}
 
@@ -124,12 +124,12 @@ export function ListForm({ nft }: ListFormProps) {
           parseFloat(priceEth) <= 0 ||
           currentStep > 0
         }
-        className="btn-primary w-full py-2.5"
+        className="btn-primary w-full py-3.5 text-xs uppercase tracking-wider font-semibold"
       >
         {currentStep > 0 ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Processing Ledger…</>
+          <><Loader2 className="w-4 h-4 animate-spin text-white" /> Processing Ledger…</>
         ) : (
-          <><Tag className="w-4 h-4 text-[var(--color-cyber-cyan)]" /> Approve & List Specimen</>
+          <><Tag className="w-4 h-4" /> Approve & List Artifact</>
         )}
       </button>
     </form>
@@ -148,30 +148,30 @@ function StepLine({
   done: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-3">
       <div
-        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 border ${
+        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 border ${
           done
-            ? "bg-[rgba(6,182,212,0.1)] text-[var(--color-cyber-cyan)] border-[var(--color-cyber-cyan)] shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+            ? "bg-indigo-50 text-indigo-600 border-indigo-200"
             : active
-            ? "bg-[rgba(79,70,229,0.1)] text-[var(--color-cyber-indigo)] border-[var(--color-cyber-indigo)] animate-pulse"
-            : "bg-white/5 text-gray-500 border-white/10"
+            ? "bg-indigo-500 text-white border-indigo-500 shadow-sm"
+            : "bg-slate-50 text-slate-400 border-slate-200"
         }`}
       >
         {done ? "✓" : step}
       </div>
       <span
-        className={
+        className={`text-xs ${
           done
-            ? "text-[var(--color-cyber-cyan)] font-semibold"
+            ? "text-indigo-600 font-semibold"
             : active
-            ? "text-white font-semibold"
-            : "text-gray-500"
-        }
+            ? "text-slate-800 font-semibold"
+            : "text-slate-400"
+        }`}
       >
         {label}
         {active && (
-          <Loader2 className="w-3 h-3 animate-spin inline ml-1.5 text-[var(--color-cyber-indigo)]" />
+          <Loader2 className="w-3 h-3 animate-spin inline-block ml-2 text-indigo-600" />
         )}
       </span>
     </div>

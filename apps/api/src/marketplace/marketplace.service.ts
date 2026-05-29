@@ -11,10 +11,35 @@ export class MarketplaceService {
   ) {}
 
   async listListings(status?: ListingStatusQuery) {
-    return this.prisma.marketplaceListing.findMany({
+    const listings = await this.prisma.marketplaceListing.findMany({
       orderBy: [{ listedAt: "desc" }, { createdAt: "desc" }],
       take: 50,
       where: status ? { status } : undefined,
+    });
+
+    if (listings.length === 0) return [];
+
+    const nftTokens = await this.prisma.nftToken.findMany({
+      where: {
+        OR: listings.map((l) => ({
+          chainId: l.chainId,
+          contractAddress: l.nftContractAddress.toLowerCase(),
+          tokenId: l.tokenId,
+        })),
+      },
+    });
+
+    return listings.map((listing) => {
+      const nft = nftTokens.find(
+        (n) =>
+          n.chainId === listing.chainId &&
+          n.contractAddress.toLowerCase() === listing.nftContractAddress.toLowerCase() &&
+          n.tokenId === listing.tokenId,
+      );
+      return {
+        ...listing,
+        nft,
+      };
     });
   }
 
@@ -29,7 +54,20 @@ export class MarketplaceService {
       throw new NotFoundException("Listing not found");
     }
 
-    return listing;
+    const nft = await this.prisma.nftToken.findUnique({
+      where: {
+        chainId_contractAddress_tokenId: {
+          chainId: listing.chainId,
+          contractAddress: listing.nftContractAddress.toLowerCase(),
+          tokenId: listing.tokenId,
+        },
+      },
+    });
+
+    return {
+      ...listing,
+      nft,
+    };
   }
 
   async listNfts() {
@@ -43,15 +81,40 @@ export class MarketplaceService {
     return this.prisma.nftToken.findMany({
       orderBy: [{ createdAt: "desc" }],
       take: 50,
-      where: { ownerAddress: walletAddress },
+      where: { ownerAddress: walletAddress.toLowerCase() },
     });
   }
 
   async listListingsBySeller(walletAddress: string) {
-    return this.prisma.marketplaceListing.findMany({
+    const listings = await this.prisma.marketplaceListing.findMany({
       orderBy: [{ listedAt: "desc" }, { createdAt: "desc" }],
       take: 50,
-      where: { sellerAddress: walletAddress },
+      where: { sellerAddress: walletAddress.toLowerCase() },
+    });
+
+    if (listings.length === 0) return [];
+
+    const nftTokens = await this.prisma.nftToken.findMany({
+      where: {
+        OR: listings.map((l) => ({
+          chainId: l.chainId,
+          contractAddress: l.nftContractAddress.toLowerCase(),
+          tokenId: l.tokenId,
+        })),
+      },
+    });
+
+    return listings.map((listing) => {
+      const nft = nftTokens.find(
+        (n) =>
+          n.chainId === listing.chainId &&
+          n.contractAddress.toLowerCase() === listing.nftContractAddress.toLowerCase() &&
+          n.tokenId === listing.tokenId,
+      );
+      return {
+        ...listing,
+        nft,
+      };
     });
   }
 

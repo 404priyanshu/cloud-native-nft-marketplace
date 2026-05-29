@@ -28,85 +28,92 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-12 max-w-7xl mx-auto font-sans bg-[var(--color-space-black)]">
+    <div className="px-4 sm:px-6 lg:px-8 py-12 max-w-7xl mx-auto font-sans">
       {/* Profile Header Card */}
-      <div className="cyber-glass p-8 mb-10 animate-fade-in bg-[rgba(10,15,30,0.6)] border border-[var(--color-cyber-cyan)]/20 shadow-2xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-cyber-cyan)] to-[var(--color-cyber-indigo)] opacity-[0.03] blur-3xl pointer-events-none" />
+      <div className="tribe-card p-8 mb-10 animate-fade-in border border-slate-100 shadow-md relative overflow-hidden bg-white">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-5">
-            {/* Avatar - Neon glowing container */}
-            <div className="w-16 h-16 rounded-2xl bg-[rgba(6,182,212,0.06)] border border-[var(--color-cyber-cyan)]/20 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
-              <User className="w-7 h-7 text-[var(--color-cyber-cyan)]" />
+            {/* Avatar - TribeOne styled container */}
+            <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 shadow-inner">
+              <User className="w-7 h-7 text-indigo-500" />
             </div>
 
             <div className="min-w-0">
-              <h1 className="text-2xl font-display font-extrabold mb-1 text-white">
+              <h1 className="text-2xl font-display font-extrabold mb-1 text-slate-900 tracking-tight">
                 {profile?.displayName || truncateAddress(wallet, 6)}
               </h1>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-gray-400 truncate">
+                <span className="text-xs font-mono text-slate-400 truncate">
                   {wallet}
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="p-1 rounded hover:bg-[rgba(255,255,255,0.05)] transition-colors text-gray-400 hover:text-[var(--color-cyber-cyan)] shrink-0 border border-transparent"
+                  className="p-1 rounded-md hover:bg-slate-50 transition-colors text-slate-400 hover:text-indigo-600 shrink-0 border border-transparent"
                   aria-label="Copy address"
                 >
                   {copied ? (
-                    <span className="text-[9px] font-sans font-bold text-[var(--color-cyber-cyan)] uppercase tracking-wider">Copied</span>
+                    <span className="text-[9px] font-sans font-bold text-indigo-600 uppercase tracking-wider">Copied</span>
                   ) : (
-                    <Copy className="w-3.5 h-3.5" />
+                    <Copy className="size-3.5" />
                   )}
                 </button>
               </div>
               {profile?.createdAt && (
-                <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-400 font-mono">
-                  <Calendar className="w-3.5 h-3.5 text-[var(--color-cyber-cyan)]" />
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400 font-mono">
+                  <Calendar className="size-3.5 text-indigo-500" />
                   Joined {formatDate(profile.createdAt)}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Stats Glance (Cyber Design) */}
-          <div className="flex gap-8 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-[var(--color-border)] md:pl-8 shrink-0">
+          {/* Stats Glance - TribeOne layout */}
+          <div className="flex gap-8 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 shrink-0">
             <div>
-              <div className="text-2xl font-display font-black text-[var(--color-cyber-cyan)]">{nfts?.length ?? "—"}</div>
-              <div className="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest">Specimen Owned</div>
+              <div className="text-2.5xl font-display font-black text-indigo-600">{nfts?.length ?? "—"}</div>
+              <div className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">Specimens Owned</div>
             </div>
             <div>
-              <div className="text-2xl font-display font-black text-[var(--color-cyber-magenta)]">{listings?.length ?? "—"}</div>
-              <div className="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest">Total Listings</div>
+              <div className="text-2.5xl font-display font-black text-rose-500">{listings?.length ?? "—"}</div>
+              <div className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">Total Listings</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 mb-8 border-b border-[var(--color-border)] pb-3">
-        {(["nfts", "listings"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={cn(
-              "px-5 py-2 rounded text-xs font-display font-bold uppercase tracking-wider transition-all duration-200 border cursor-pointer",
-              tab === t
-                ? "bg-[linear-gradient(135deg,var(--color-cyber-indigo),var(--color-cyber-cyan))] border-transparent text-white shadow-[0_0_15px_rgba(6,182,212,0.25)]"
-                : "bg-[rgba(255,255,255,0.02)] border-[var(--color-border)] text-gray-400 hover:border-gray-500 hover:text-white"
-            )}
-          >
-            {t === "nfts" ? "Owned Specimen" : "Catalog Listings"}
-          </button>
-        ))}
+      {/* Tabs Menu Capsule */}
+      <div className="flex items-center gap-2 mb-10 border-b border-slate-100 pb-4 animate-fade-in animate-delay-100">
+        <div className="bg-white p-1 rounded-full border border-slate-100 shadow-sm flex gap-1">
+          {([
+            { id: "nfts", label: "Owned Specimens" },
+            { id: "listings", label: "Escrow Listings" },
+          ] as const).map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={cn(
+                  "px-5 py-2 text-xs font-display font-semibold rounded-full uppercase tracking-wider transition-all duration-300 cursor-pointer border-none",
+                  active
+                    ? "bg-slate-900 text-white shadow-sm"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                )}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tab Content */}
-      <div className="animate-fade-in">
+      <div className="animate-fade-in animate-delay-150">
         {tab === "nfts" ? (
           <NftGrid
             nfts={nfts ?? []}
             isLoading={isNftsLoading}
-            emptyMessage="This wallet does not own any specimens yet."
+            emptyMessage="This wallet does not own any NFTs yet."
           />
         ) : (
           <ListingGrid

@@ -43,20 +43,17 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 font-sans">
-      {/* Left Column: Framed Image with Backdrop Glowing Mesh */}
-      <div className="relative group">
-        {/* Pulsing Backlit Cyan/Magenta Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-cyber-cyan)] to-[var(--color-cyber-magenta)] opacity-10 blur-3xl group-hover:opacity-20 transition-opacity pointer-events-none rounded-xl" />
-
-        <div className="cyber-glass p-4 relative overflow-hidden shadow-2xl border border-[var(--color-border-glow)] animate-float">
-          <div className="w-full aspect-square relative rounded-lg overflow-hidden border border-white/5 shadow-inner bg-[var(--color-space-black)]">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 font-sans pt-6">
+      {/* Left Column: Framed Image with Premium Outline */}
+      <div className="relative group animate-fade-in">
+        <div className="tribe-card p-5 relative overflow-hidden bg-white">
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-50 border border-slate-100/50 shadow-inner">
             {nft.imageUrl ? (
               <Image
                 src={nft.imageUrl}
                 alt={nft.name || `Token #${nft.tokenId}`}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-700 hover:scale-105"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />
@@ -65,7 +62,7 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
                 className="w-full h-full flex items-center justify-center"
                 style={{ background: stringToGradient(nft.tokenId + nft.contractAddress) }}
               >
-                <span className="text-6xl font-display font-black text-white/20">
+                <span className="text-6xl font-display font-black text-slate-800">
                   #{nft.tokenId}
                 </span>
               </div>
@@ -75,14 +72,14 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
       </div>
 
       {/* Right Column: Editorial metadata & Actions */}
-      <div className="space-y-6">
+      <div className="space-y-8 animate-fade-in" style={{ animationDelay: "0.15s" }}>
         {/* Title + Status */}
-        <div className="space-y-3">
-          <h1 className="text-3xl sm:text-4xl font-display font-black text-white leading-tight">
-            {nft.name || `Token #${nft.tokenId}`}
-          </h1>
-          {listing && (
-            <div>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100/40">
+              ERC-721 Token
+            </span>
+            {listing && (
               <span
                 className={`badge ${
                   listing.status === "ACTIVE"
@@ -94,29 +91,32 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
               >
                 {listing.status}
               </span>
-            </div>
-          )}
+            )}
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-display font-extrabold text-slate-900 leading-tight tracking-tight">
+            {nft.name || `Token #${nft.tokenId}`}
+          </h1>
         </div>
 
         {/* Description */}
         {nft.description && (
-          <p className="text-gray-300 bg-[rgba(255,255,255,0.015)] border border-[var(--color-border)] rounded-md px-4 py-3 text-sm leading-relaxed italic">
+          <p className="text-slate-600 bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm leading-relaxed italic shadow-sm">
             &quot;{nft.description}&quot;
           </p>
         )}
 
         {/* Price + Action Box */}
         {isActiveListing && (
-          <div className="cyber-glass-glow p-6 space-y-4 border border-[var(--color-cyber-magenta)]/30 bg-[rgba(10,14,26,0.6)]">
+          <div className="tribe-card p-6 space-y-5 bg-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-mono font-bold tracking-widest text-gray-400 uppercase">Current Trade Price</p>
-                <p className="text-3xl font-display font-black text-white mt-1">
-                  {formatEthPrice(listing.priceWei)} <span className="text-xs font-mono font-bold text-[var(--color-cyber-cyan)]">ETH</span>
+                <p className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase">Current Trade Price</p>
+                <p className="text-3.5xl font-display font-extrabold text-slate-900 mt-1">
+                  {formatEthPrice(listing.priceWei)} <span className="text-sm font-mono font-bold text-indigo-600">ETH</span>
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-[rgba(6,182,212,0.1)] border border-[var(--color-cyber-cyan)]/20 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.1)]">
-                <Tag className="w-5 h-5 text-[var(--color-cyber-cyan)]" />
+              <div className="size-11 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center">
+                <Tag className="size-5 text-indigo-600" />
               </div>
             </div>
 
@@ -126,16 +126,16 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
                   buy(BigInt(listing.listingId), BigInt(listing.priceWei))
                 }
                 disabled={isBuying || isBuyConfirming || isBought}
-                className="btn-primary w-full py-3 text-xs"
+                className="btn-primary w-full py-3.5 text-xs uppercase tracking-wider font-bold h-12"
               >
                 {isBuying ? (
-                  <><Loader2 className="w-4 h-4 animate-spin text-[var(--color-cyber-cyan)]" /> Confirming in wallet…</>
+                  <><Loader2 className="size-4 animate-spin text-white" /> Confirming in wallet…</>
                 ) : isBuyConfirming ? (
-                  <><Loader2 className="w-4 h-4 animate-spin text-[var(--color-cyber-cyan)]" /> Clearing Ledger transaction…</>
+                  <><Loader2 className="size-4 animate-spin text-white" /> Clearing Ledger transaction…</>
                 ) : isBought ? (
-                  <><CheckCircle2 className="w-4 h-4" /> Staged and Acquired!</>
+                  <><CheckCircle2 className="size-4" /> Staged and Acquired!</>
                 ) : (
-                  <><Tag className="w-4 h-4" /> Acquire Specimen</>
+                  <><Tag className="size-4" /> Acquire Specimen</>
                 )}
               </button>
             )}
@@ -144,14 +144,14 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
               <button
                 onClick={() => cancel(BigInt(listing.listingId))}
                 disabled={isCancelling || isCancelConfirming || isCancelled}
-                className="btn-danger w-full py-3 text-xs"
+                className="btn-danger w-full py-3.5 text-xs uppercase tracking-wider font-bold h-12 bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors border border-rose-100 rounded-full"
               >
                 {isCancelling ? (
-                  <><Loader2 className="w-4 h-4 animate-spin text-[var(--color-cyber-magenta)]" /> Confirming…</>
+                  <><Loader2 className="size-4 animate-spin text-rose-500" /> Confirming…</>
                 ) : isCancelConfirming ? (
-                  <><Loader2 className="w-4 h-4 animate-spin text-[var(--color-cyber-magenta)]" /> Relinquishing escrow…</>
+                  <><Loader2 className="size-4 animate-spin text-rose-500" /> Relinquishing escrow…</>
                 ) : isCancelled ? (
-                  <><CheckCircle2 className="w-4 h-4" /> Relinquished</>
+                  <><CheckCircle2 className="size-4" /> Relinquished</>
                 ) : (
                   "Relinquish Escrow"
                 )}
@@ -159,9 +159,9 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
             )}
 
             {(buyError || cancelError) && (
-              <div className="flex items-start gap-2 text-sm text-red-200 bg-[rgba(239,68,68,0.1)] border border-red-900/50 rounded-lg p-3">
-                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-red-400" />
-                <span>{(buyError || cancelError)?.message}</span>
+              <div className="flex items-start gap-2.5 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl p-3.5">
+                <AlertCircle className="size-4 mt-0.5 shrink-0 text-rose-500" />
+                <span className="font-medium">{(buyError || cancelError)?.message}</span>
               </div>
             )}
           </div>
@@ -169,22 +169,25 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
 
         {/* List for Sale (if owner and not listed) */}
         {isOwner && !isActiveListing && (
-          <div className="cyber-glass p-6 border border-[var(--color-cyber-indigo)]/30">
-            <h3 className="text-base font-display font-extrabold mb-4 border-b border-[var(--color-border)] pb-2 text-white glow-text-cyan">Staged Listing Contracts</h3>
+          <div className="tribe-card p-6 bg-white">
+            <h3 className="text-md font-display font-extrabold mb-4 border-b border-slate-100 pb-3 text-slate-900 flex items-center gap-2">
+              <Tag className="size-4.5 text-indigo-500" />
+              Stage Listing Contract
+            </h3>
             <ListForm nft={nft} />
           </div>
         )}
 
         {/* Details Table */}
-        <div className="cyber-glass p-6">
-          <h3 className="text-xs font-mono font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-[var(--color-border)] pb-2">
+        <div className="tribe-card p-6 bg-white">
+          <h3 className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-3">
             Ledger Metadata
           </h3>
-          <table className="kami-table financial compact">
+          <table className="kami-table financial compact w-full">
             <tbody>
-              <MetaRow icon={<Hash className="w-3.5 h-3.5" />} label="Token ID Spec" value={nft.tokenId} />
+              <MetaRow icon={<Hash className="size-3.5" />} label="Token ID Spec" value={nft.tokenId} />
               <MetaRow
-                icon={<FileCode2 className="w-3.5 h-3.5" />}
+                icon={<FileCode2 className="size-3.5" />}
                 label="Contract Address"
                 value={truncateAddress(nft.contractAddress, 5)}
                 copyValue={nft.contractAddress}
@@ -192,7 +195,7 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
                 onCopy={(v) => handleCopy(v, "Contract Address")}
               />
               <MetaRow
-                icon={<User className="w-3.5 h-3.5" />}
+                icon={<User className="size-3.5" />}
                 label="Creator Origin"
                 value={nft.creatorAddress ? truncateAddress(nft.creatorAddress) : "—"}
                 copyValue={nft.creatorAddress ?? undefined}
@@ -200,7 +203,7 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
                 onCopy={(v) => handleCopy(v, "Creator Origin")}
               />
               <MetaRow
-                icon={<User className="w-3.5 h-3.5" />}
+                icon={<User className="size-3.5" />}
                 label="Owner Custody"
                 value={nft.ownerAddress ? truncateAddress(nft.ownerAddress) : "—"}
                 copyValue={nft.ownerAddress ?? undefined}
@@ -209,7 +212,7 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
               />
               {nft.tokenUri && (
                 <MetaRow
-                  icon={<LinkIcon className="w-3.5 h-3.5" />}
+                  icon={<LinkIcon className="size-3.5" />}
                   label="Token URI Payload"
                   value={nft.tokenUri.length > 30 ? nft.tokenUri.slice(0, 30) + "…" : nft.tokenUri}
                   copyValue={nft.tokenUri}
@@ -218,7 +221,7 @@ export function NftDetail({ nft, listing, isOwner }: NftDetailProps) {
                 />
               )}
               <MetaRow
-                icon={<Hash className="w-3.5 h-3.5" />}
+                icon={<Hash className="size-3.5" />}
                 label="Ledger Entry Date"
                 value={formatDate(nft.createdAt)}
               />
@@ -246,24 +249,24 @@ function MetaRow({
   onCopy?: (v: string) => void;
 }) {
   return (
-    <tr className="border-b border-white/[0.02] last:border-0">
-      <td className="py-2.5 pl-0 pr-2 flex items-center gap-2 text-gray-400 font-sans font-medium text-xs">
-        <span className="text-[var(--color-cyber-cyan)]">{icon}</span>
+    <tr className="border-b border-slate-100 last:border-0">
+      <td className="py-3 pl-0 pr-2 flex items-center gap-2 text-slate-500 font-sans font-medium text-xs">
+        <span className="text-indigo-500">{icon}</span>
         <span>{label}</span>
       </td>
-      <td className="py-2.5 pl-2 pr-0 text-right font-mono text-white text-xs">
-        <div className="inline-flex items-center gap-1.5 justify-end">
+      <td className="py-3 pl-2 pr-0 text-right font-mono text-slate-700 text-xs">
+        <div className="inline-flex items-center gap-2 justify-end">
           <span>{value}</span>
           {copyValue && onCopy && (
             <button
               onClick={() => onCopy(copyValue)}
-              className="p-1 rounded hover:bg-[rgba(255,255,255,0.05)] transition-colors text-gray-400 hover:text-[var(--color-cyber-cyan)] border border-transparent"
+              className="p-1 rounded-md hover:bg-slate-50 transition-colors text-slate-400 hover:text-indigo-600 border border-transparent"
               aria-label={`Copy ${label}`}
             >
               {copied ? (
-                <span className="text-[9px] font-sans font-bold text-[var(--color-cyber-cyan)] uppercase tracking-wider">Copied</span>
+                <span className="text-[9px] font-sans font-bold text-indigo-600 uppercase tracking-wider">Copied</span>
               ) : (
-                <Copy className="w-3 h-3" />
+                <Copy className="size-3" />
               )}
             </button>
           )}

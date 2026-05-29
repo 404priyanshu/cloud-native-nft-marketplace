@@ -9,6 +9,7 @@ allowBuilds:
   bufferutil: true
   esbuild: true
   keccak: true
+  msw: false
   prisma: true
   sharp: true
   unrs-resolver: true

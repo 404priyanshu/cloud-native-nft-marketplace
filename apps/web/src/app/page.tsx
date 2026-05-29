@@ -1,194 +1,234 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
-import { ArrowRight, Zap } from "lucide-react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Cloud,
+  DatabaseZap,
+  FileCheck2,
+  ShieldCheck,
+  WalletCards,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useListings } from "@/hooks/use-api";
+import { ListingGrid } from "@/components/marketplace/listing-grid";
+import { formatEthPrice } from "@/lib/utils";
+
+const proofPoints = [
+  {
+    label: "Settlement",
+    value: "Escrow ERC-721",
+    note: "Listing, sale, cancellation, and fee split live in Solidity.",
+  },
+  {
+    label: "Read Model",
+    value: "Event Indexed",
+    note: "PostgreSQL is rebuilt from emitted chain events for fast UX.",
+  },
+  {
+    label: "Operations",
+    value: "ECS Ready",
+    note: "API and worker are packaged for Fargate with Redis and RDS.",
+  },
+];
+
+const architecture = [
+  {
+    icon: WalletCards,
+    title: "Wallet writes",
+    description:
+      "Mint, list, buy, and cancel actions are signed by the user and sent directly to the contracts.",
+  },
+  {
+    icon: DatabaseZap,
+    title: "Indexed reads",
+    description:
+      "The worker processes NFTMinted, NFTListed, NFTSold, and ListingCancelled into queryable tables.",
+  },
+  {
+    icon: Cloud,
+    title: "Cloud runtime",
+    description:
+      "NestJS, Prisma, Redis, Docker, GitHub Actions, and Terraform form the deployment backbone.",
+  },
+];
 
 export default function HomePage() {
+  const { data: listings, isLoading } = useListings("ACTIVE");
+  const featuredListing = listings?.[0];
+  const featuredImage =
+    featuredListing?.nft?.imageUrl ?? "/images/hero_holo_nft.png";
+  const featuredName =
+    featuredListing?.nft?.name ??
+    (featuredListing
+      ? `Token #${featuredListing.tokenId}`
+      : "Marketplace system preview");
+  const featuredSource = featuredListing ? "Indexed listing" : "Visual preview";
+  const featuredStatus = featuredListing?.status ?? "Awaiting listings";
+  const featuredDetail = featuredListing
+    ? `${formatEthPrice(featuredListing.priceWei)} ETH`
+    : "No indexed active listing selected";
+
   return (
-    <div className="relative w-full max-w-full overflow-hidden font-sans bg-[var(--color-space-black)] min-h-screen">
-      {/* Backlit Cyber Glows (Mouse/Static background highlights) */}
-      <div className="absolute top-[10%] left-[15%] w-[400px] h-[400px] rounded-full bg-[var(--color-cyber-cyan)] opacity-[0.08] blur-[120px] animate-pulse pointer-events-none" />
-      <div className="absolute top-[20%] right-[15%] w-[450px] h-[450px] rounded-full bg-[var(--color-cyber-magenta)] opacity-[0.08] blur-[120px] animate-pulse pointer-events-none" style={{ animationDelay: "2s" }} />
-
-      {/* Retro-Futuristic 3D Perspective Grid */}
-      <div className="perspective-grid" />
-
-      {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-16 pb-20 max-w-7xl mx-auto z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Composed Call to Action */}
-          <div className="lg:col-span-7 space-y-6 text-left animate-fade-in">
-            {/* Luminous Cyber Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(6,182,212,0.06)] border border-[var(--color-cyber-cyan)]/30 text-[10px] font-mono font-bold text-[var(--color-cyber-cyan-hover)] uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.15)] animate-pulse">
-              <Zap className="w-3.5 h-3.5 text-[var(--color-cyber-cyan)]" />
-              Decentralized Ledger Provenance
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight leading-[1.1] text-white">
-              Discover, Mint & <br />
-              <span className="glow-text-grad">Trade Cyber Artifacts</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-gray-300 max-w-xl leading-relaxed pt-2">
-              A high-fidelity cloud-native NFT marketplace built with Solidity smart contracts, 
-              event-driven ledger indexing, and spatial glassmorphism. Acquire and manage specimen 
-              on an immutable on-chain registry.
-            </p>
-
-            <div className="flex items-center gap-4 flex-wrap pt-4">
-              <Link href="/marketplace" className="btn-primary text-xs tracking-wider px-6 py-3 font-bold shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)]">
-                Explore Catalog
-                <ArrowRight className="w-4 h-4 text-[var(--color-cyber-cyan)]" />
-              </Link>
-              <Link href="/mint" className="btn-secondary text-xs tracking-wider px-6 py-3 font-bold border-[rgba(255,255,255,0.08)]">
-                Mint Specimen
-              </Link>
-            </div>
+    <div className="relative overflow-hidden pt-6">
+      {/* 1. Hero Block */}
+      <section className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-28 lg:pt-16">
+        <div className="flex flex-col gap-8 animate-fade-in">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="bg-white border-slate-100 text-slate-700 font-display font-semibold uppercase tracking-wider text-[10px] px-3 py-1 rounded-full shadow-sm">
+              Contract-settled marketplace
+            </Badge>
+            <Badge className="bg-indigo-50 border-none text-indigo-600 font-display font-semibold uppercase tracking-wider text-[10px] px-3 py-1 rounded-full shadow-sm hover:bg-indigo-100">
+              Indexer-backed API
+            </Badge>
           </div>
 
-          {/* Right Column: Floating 3D Holographic Specimen Card */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <div className="relative group w-full max-w-[380px]">
-              {/* Backlit Luminous Halo */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-cyber-cyan)] to-[var(--color-cyber-magenta)] opacity-25 blur-3xl group-hover:opacity-40 transition-opacity pointer-events-none" />
+          <div className="max-w-3xl">
+            <h1 className="text-5xl font-display font-extrabold leading-[1.08] text-slate-900 tracking-tight sm:text-6xl lg:text-7xl">
+              Sovereign Asset <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-500 via-indigo-500 to-indigo-600">
+                Marketplace
+              </span>
+            </h1>
+            <p className="mt-6 max-w-xl text-md leading-relaxed text-slate-500">
+              A premium, high-speed digital asset terminal. Solidity contracts handle on-chain trust
+              and escrow settlement, while a cloud-native worker indexes real-time blockchain logs.
+            </p>
+          </div>
 
-              {/* Matting Glass Container */}
-              <div className="cyber-glass p-5 relative overflow-hidden shadow-2xl border border-[var(--color-cyber-cyan)]/30 animate-float bg-[rgba(10,15,30,0.6)]">
-                {/* Visual Framed Image wrapper */}
-                <div className="w-full aspect-square relative rounded-lg overflow-hidden bg-[var(--color-space-black)] border border-white/5 shadow-inner">
-                  <Image
-                    src="/images/hero_holo_nft.png"
-                    alt="CyberHolo Rotating Specimen core"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                    priority
-                  />
-                </div>
+          <div className="flex flex-col gap-3.5 sm:flex-row">
+            <Link href="/marketplace" className="btn-primary">
+              Explore Marketplace
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link href="/mint" className="btn-secondary">
+              Mint Artifact
+            </Link>
+          </div>
 
-                {/* Cyber Card Branding labels */}
-                <div className="pt-4 flex items-center justify-between font-mono">
-                  <div className="space-y-0.5">
-                    <span className="text-[9px] text-gray-500 uppercase tracking-widest block">AUTHENTIC ENTITY</span>
-                    <span className="text-xs font-bold text-white tracking-wide">CRYSTAL_CORE_N01</span>
-                  </div>
-                  <span className="badge badge-active text-[10px]">
-                    ACTIVE ESCROW
-                  </span>
-                </div>
+          <div className="glance-grid mt-4">
+            {proofPoints.map((item) => (
+              <div key={item.label} className="glance-cell">
+                <div className="glance-label">{item.label}</div>
+                <div className="glance-value text-slate-950 font-display">{item.value}</div>
+                <div className="glance-note text-slate-400">{item.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative flex justify-center lg:justify-end animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          {/* Specimen Frame - TribeOne Card style */}
+          <div className="tribe-card p-5 max-w-[460px] w-full bg-white tilt-card">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">Specimen preview</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                {featuredListing ? `Listing ${featuredListing.listingId}` : "Local visual"}
+              </span>
+            </div>
+
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-100 mb-5">
+              <Image
+                src={featuredImage}
+                alt={featuredName}
+                fill
+                className="object-cover transition-transform duration-700 hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 420px"
+                priority
+              />
+            </div>
+
+            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+              <div>
+                <h3 className="text-md font-display font-extrabold text-slate-900">{featuredName}</h3>
+                <p className="mt-1 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">{featuredSource}</p>
+              </div>
+              <div className="text-right">
+                <p className="font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">{featuredDetail}</p>
+                <p className="mt-0.5 font-display font-semibold text-emerald-600 text-xs bg-emerald-50 px-2.5 py-0.5 rounded-full inline-block">{featuredStatus}</p>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Stats Row (Glance Grid Style) */}
-        <div 
-          className="mt-20 max-w-7xl mx-auto animate-fade-in" 
-          style={{ animationDelay: "0.3s" }}
-        >
-          <div className="glance-grid">
-            <div className="glance-cell border-l-4 border-[var(--color-cyber-cyan)] shadow-[0_0_15px_rgba(6,182,212,0.05)]">
-              <div className="glance-label">LEDGER SPEC</div>
-              <div className="glance-value text-white">ERC-721</div>
-              <div className="glance-note">Sovereign smart contracts</div>
+      {/* 2. Marketplace Preview */}
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 border-t border-slate-100/60 pt-16">
+        <div className="mb-8 flex flex-col gap-4">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">Marketplace preview</span>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-3xl font-display font-extrabold text-slate-900 tracking-tight sm:text-4xl flex items-center gap-2">
+              Active contract listings
+            </h2>
+
+            <Link href="/marketplace" className="btn-secondary">
+              View full catalog
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </div>
+
+        <ListingGrid
+          listings={listings ?? []}
+          isLoading={isLoading}
+          emptyMessage="No catalog items indexed yet."
+        />
+      </section>
+
+      {/* 3. Tech Architecture Section */}
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <Separator className="bg-slate-200/60 mb-16" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {architecture.map((item) => (
+            <div
+              key={item.title}
+              className="tribe-card p-8 bg-white flex flex-col gap-4 transition-all duration-300"
+            >
+              <div className="size-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-primary shadow-sm">
+                <item.icon className="size-5" />
+              </div>
+              <h3 className="text-lg font-display font-extrabold text-slate-900 mt-2">{item.title}</h3>
+              <p className="text-xs leading-relaxed text-slate-500">
+                {item.description}
+              </p>
             </div>
-            <div className="glance-cell border-l-4 border-[var(--color-cyber-magenta)] shadow-[0_0_15px_rgba(217,70,239,0.05)]">
-              <div className="glance-label">CLEARING ESCROW</div>
-              <div className="glance-value text-white">2.5%</div>
-              <div className="glance-note">Low-friction split clearing</div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Banner CTA */}
+      <section className="mx-auto max-w-5xl px-4 pb-24 sm:px-6 lg:px-8">
+        <div className="tribe-card bg-gradient-to-br from-slate-900 to-slate-950 text-white p-10 md:p-14 shadow-xl relative overflow-hidden">
+          <div className="absolute -right-20 -top-20 size-80 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -left-20 -bottom-20 size-80 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
+
+          <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center relative z-10">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/20 px-3 py-1 rounded-full w-fit">
+                <ShieldCheck className="size-4" />
+                Backend never holds private keys
+              </div>
+              <h2 className="text-3xl font-display font-extrabold leading-tight text-white sm:text-4xl">
+                The marketplace is the domain. <br />
+                The system design is the proof.
+              </h2>
+              <p className="max-w-2xl text-slate-300 text-xs leading-relaxed">
+                Browse listed assets instantly through the high-performance PostgreSQL read model,
+                then execute secure ownership changes via your hardware or web wallet.
+              </p>
             </div>
-            <div className="glance-cell border-l-4 border-[var(--color-cyber-indigo)] shadow-[0_0_15px_rgba(79,70,229,0.05)]">
-              <div className="glance-label">EVENT INDEXER</div>
-              <div className="glance-value text-white">ON-CHAIN</div>
-              <div className="glance-note">Idempotent database indexing</div>
+            <div>
+              <Link href="/dashboard" className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 border-none font-bold shadow-lg h-11 px-6 rounded-full flex items-center gap-1.5 transition-all">
+                Go to Dashboard
+                <FileCheck2 className="size-4 text-indigo-500" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto z-10">
-        <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-center mb-12 text-white">
-          Decentralized Trading <span className="glow-text-grad">Topology</span>
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FeatureCard
-            step="I"
-            title="Artifact Creation"
-            description="Securely upload metadata payloads and mint unique ERC-721 tokens to the blockchain ledger. Gain absolute, cryptographic provenance."
-          />
-          <FeatureCard
-            step="II"
-            title="Sovereign Escrow"
-            description="Approve and deposit specimens into the decentralized marketplace contract. Relinquish custody only when buyer terms clear."
-          />
-          <FeatureCard
-            step="III"
-            title="Symmetric Clearance"
-            description="Acquire artifacts instantly via transparent smart-contract settlements. Royalties and split gallery fees execute atomically."
-          />
-        </div>
-      </section>
-
-      {/* Architectural Highlight */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-12 max-w-4xl mx-auto z-10 pb-20">
-        <div className="cyber-glass-glow p-8 sm:p-12 text-center border border-[var(--color-cyber-cyan)]/20 bg-[rgba(10,14,26,0.65)]">
-          <h2 className="text-xl sm:text-2xl font-display font-black mb-4 text-white leading-tight">
-            A Composed System Built for <span className="text-[var(--color-cyber-cyan)] font-bold">Production</span>
-          </h2>
-          <p className="text-gray-400 text-sm mb-8 max-w-2xl mx-auto leading-relaxed">
-            This repository is an implementation of a complete cloud-native architecture. 
-            Ethereum smart contracts establish absolute provenance, a read-optimized event indexer 
-            guarantees idempotency in PostgreSQL, and an elegant NestJS REST API serves data to this 
-            composed print-ready Next.js client.
-          </p>
-          <div className="flex items-center justify-center gap-2 flex-wrap text-[9px] font-mono font-bold tracking-widest uppercase text-gray-400">
-            {[
-              "Solidity",
-              "Hardhat",
-              "NestJS",
-              "Prisma",
-              "PostgreSQL",
-              "Redis",
-              "Next.js",
-              "wagmi",
-              "Docker",
-              "Terraform",
-            ].map((tech) => (
-              <span
-                key={tech}
-                className="px-3 py-1 rounded bg-[rgba(255,255,255,0.015)] border border-white/5 shadow-inner"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function FeatureCard({
-  step,
-  title,
-  description,
-}: {
-  step: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="cyber-glass p-8 flex flex-col justify-between group transition-all duration-300">
-      <div>
-        <div className="text-xs font-mono font-bold text-[var(--color-cyber-cyan)] mb-3 tracking-widest">
-          {step}
-        </div>
-        <h3 className="text-base font-display font-bold mb-2 text-white">{title}</h3>
-        <p className="text-gray-400 text-xs leading-relaxed">
-          {description}
-        </p>
-      </div>
     </div>
   );
 }

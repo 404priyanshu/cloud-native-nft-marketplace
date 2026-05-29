@@ -121,6 +121,24 @@ export async function applyIndexedEvent(
   await recordEvent(prisma, context, event);
 
   if (event.name === "NFTMinted") {
+    let name: string | null = null;
+    let description: string | null = null;
+    let imageUrl: string | null = null;
+
+    const tokenUri = event.args.tokenURI;
+    if (tokenUri && tokenUri.startsWith("data:application/json;base64,")) {
+      try {
+        const base64Data = tokenUri.substring("data:application/json;base64,".length);
+        const decoded = Buffer.from(base64Data, "base64").toString("utf-8");
+        const parsed = JSON.parse(decoded);
+        name = parsed.name || null;
+        description = parsed.description || null;
+        imageUrl = parsed.image || null;
+      } catch (e) {
+        console.error("Failed to parse base64 token URI metadata:", e);
+      }
+    }
+
     await prisma.nftToken.upsert({
       create: {
         chainId: context.chainId,
@@ -129,11 +147,17 @@ export async function applyIndexedEvent(
         ownerAddress: normalizeAddress(event.args.owner),
         tokenId: bigintString(event.args.tokenId),
         tokenUri: event.args.tokenURI,
+        name,
+        description,
+        imageUrl,
       },
       update: {
         creatorAddress: normalizeAddress(event.args.owner),
         ownerAddress: normalizeAddress(event.args.owner),
         tokenUri: event.args.tokenURI,
+        name,
+        description,
+        imageUrl,
       },
       where: {
         chainId_contractAddress_tokenId: {

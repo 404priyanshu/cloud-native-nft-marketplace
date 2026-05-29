@@ -42,6 +42,7 @@ export interface MarketplaceListing {
   cancelledTxHash: string | null;
   createdAt: string;
   updatedAt: string;
+  nft?: NftToken | null;
 }
 
 export interface MarketplaceEvent {

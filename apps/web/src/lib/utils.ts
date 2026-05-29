@@ -64,3 +64,9 @@ export function stringToGradient(str: string): string {
   const h2 = (h1 + 40) % 360;
   return `linear-gradient(135deg, hsl(${h1}, 70%, 40%), hsl(${h2}, 80%, 55%))`;
 }
+
+export function addressInitials(value?: string | null): string {
+  if (!value) return "BF";
+  const normalized = value.replace(/^0x/i, "");
+  return (normalized.slice(0, 2) || "BF").toUpperCase();
+}

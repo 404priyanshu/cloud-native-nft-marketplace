@@ -52,22 +52,22 @@ export function MintForm() {
 
   if (isSuccess) {
     return (
-      <div className="text-center py-8 animate-fade-in font-sans">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[rgba(6,182,212,0.1)] mb-6 border border-[var(--color-cyber-cyan)]/30 shadow-[0_0_20px_rgba(6,182,212,0.2)] animate-pulse">
-          <CheckCircle2 className="w-8 h-8 text-[var(--color-cyber-cyan)]" />
+      <div className="text-center py-10 animate-fade-in font-sans">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 mb-6 border border-indigo-100">
+          <CheckCircle2 className="w-8 h-8 text-indigo-600" />
         </div>
-        <h2 className="text-2xl font-display font-extrabold mb-2 text-white glow-text-cyan">Artifact Cryptographically Minted</h2>
-        <p className="text-gray-400 mb-6 text-sm max-w-sm mx-auto leading-relaxed">
-          Your digital specimen has been uploaded and successfully registered on the Ethereum blockchain.
+        <h2 className="text-2xl font-display font-extrabold mb-2 text-slate-900 tracking-tight">Artifact Minted Successfully</h2>
+        <p className="text-slate-500 mb-6 text-sm max-w-sm mx-auto leading-relaxed">
+          Your digital artifact has been cryptographically signed and registered on the Ethereum ledger.
         </p>
         {txHash && (
-          <p className="text-[10px] font-mono text-[var(--color-cyber-cyan)] bg-[rgba(6,182,212,0.05)] border border-[rgba(6,182,212,0.15)] rounded-md px-3 py-2.5 mb-6 break-all max-w-sm mx-auto select-all">
+          <p className="text-[10px] font-mono text-indigo-600 bg-indigo-50/50 border border-indigo-100/50 rounded-xl px-4 py-3 mb-8 break-all max-w-sm mx-auto select-all">
             TX HASH: {txHash}
           </p>
         )}
         <div className="flex items-center justify-center gap-3">
           <Link href="/marketplace" className="btn-primary">
-            View Marketplace
+            Go to Marketplace
           </Link>
           <button
             onClick={() => {
@@ -89,25 +89,27 @@ export function MintForm() {
     <form onSubmit={handleSubmit} className="space-y-6 font-sans">
       {/* Image Upload */}
       <div>
-        <label className="block text-xs font-display font-bold uppercase tracking-widest mb-2 text-gray-300">
-          Digital Artwork <span className="text-gray-500 font-normal font-sans">(optional)</span>
+        <label className="block text-[10px] font-mono font-bold uppercase tracking-wider mb-2 text-slate-400">
+          Digital Artwork <span className="text-slate-400 font-normal font-sans">(optional)</span>
         </label>
         {imagePreview ? (
-          <div className="relative aspect-video rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-space-charcoal)] shadow-[0_0_15px_rgba(0,0,0,0.4)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-full h-full object-cover"
-            />
+          <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-100/60 bg-slate-50 shadow-inner p-2 bg-white">
+            <div className="w-full h-full relative rounded-xl overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <button
               type="button"
               onClick={() => {
                 setImagePreview(null);
               }}
-              className="absolute top-3 right-3 p-1.5 rounded-lg bg-[var(--color-space-black)] hover:bg-black/80 border border-[var(--color-border)] text-white transition-colors"
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/90 hover:bg-white border border-slate-100 text-slate-500 hover:text-rose-500 transition-colors shadow-md"
             >
-              <X className="w-4 h-4 text-[var(--color-cyber-magenta)]" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
@@ -119,17 +121,17 @@ export function MintForm() {
             }}
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
-            className={`aspect-video rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
+            className={`aspect-video rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
               isDragOver
-                ? "border-[var(--color-cyber-cyan)] bg-[rgba(6,182,212,0.05)] shadow-[0_0_20px_rgba(6,182,212,0.1)]"
-                : "border-[var(--color-border)] hover:border-[var(--color-cyber-indigo)] hover:bg-[rgba(255,255,255,0.01)]"
+                ? "border-indigo-500 bg-indigo-50/40"
+                : "border-slate-200 bg-white/40 hover:border-indigo-400 hover:bg-white/60"
             }`}
           >
-            <ImagePlus className="w-10 h-10 mb-3 text-gray-500 transition-transform group-hover:scale-105" />
-            <p className="text-sm text-gray-300 font-display font-semibold tracking-wide">
-              Drag & drop files or click to browse
+            <ImagePlus className="w-9 h-9 mb-3 text-slate-400 transition-transform duration-300 hover:scale-105" />
+            <p className="text-sm text-slate-800 font-display font-semibold tracking-wide">
+              Drag & drop dynamic files, or click to browse
             </p>
-            <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1.5">
+            <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1.5">
               PNG, JPG, GIF, SVG, WEBP (MAX 10MB)
             </p>
           </div>
@@ -148,15 +150,15 @@ export function MintForm() {
 
       {/* Name */}
       <div>
-        <label htmlFor="nft-name" className="block text-xs font-display font-bold uppercase tracking-widest mb-2 text-gray-300">
-          Specimen Name <span className="text-[var(--color-cyber-magenta)] font-normal">*</span>
+        <label htmlFor="nft-name" className="block text-[10px] font-mono font-bold uppercase tracking-wider mb-2 text-slate-400">
+          Specimen Name <span className="text-rose-500 font-normal">*</span>
         </label>
         <input
           id="nft-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Neo-Holographic Shard"
+          placeholder="e.g. Prism Shield"
           required
           className="input"
         />
@@ -164,14 +166,14 @@ export function MintForm() {
 
       {/* Description */}
       <div>
-        <label htmlFor="nft-description" className="block text-xs font-display font-bold uppercase tracking-widest mb-2 text-gray-300">
-          Decentralized Description
+        <label htmlFor="nft-description" className="block text-[10px] font-mono font-bold uppercase tracking-wider mb-2 text-slate-400">
+          Metadata Description
         </label>
         <textarea
           id="nft-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter a cryptographic description for your indexed dynamic token..."
+          placeholder="Enter a dynamic metadata description for your ledger-registered token..."
           rows={4}
           className="input"
         />
@@ -179,9 +181,9 @@ export function MintForm() {
 
       {/* Error */}
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-200 bg-[rgba(239,68,68,0.1)] border border-red-900/50 rounded-lg p-3">
-          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-red-400" />
-          <span>{error.message}</span>
+        <div className="flex items-start gap-2.5 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl p-3.5">
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-rose-500" />
+          <span className="font-medium">{error.message}</span>
         </div>
       )}
 
@@ -189,14 +191,14 @@ export function MintForm() {
       <button
         type="submit"
         disabled={!name.trim() || isPending || isConfirming}
-        className="btn-primary w-full py-3"
+        className="btn-primary w-full py-3.5 text-xs uppercase tracking-wider font-semibold"
       >
         {isPending ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Confirming in wallet…</>
+          <><Loader2 className="w-4 h-4 animate-spin text-white" /> Confirming in wallet…</>
         ) : isConfirming ? (
-          <><Loader2 className="w-4 h-4 animate-spin animate-pulse" /> Registering on ledger…</>
+          <><Loader2 className="w-4 h-4 animate-spin text-white" /> Registering on ledger…</>
         ) : (
-          <><Upload className="w-4 h-4 text-[var(--color-cyber-cyan)]" /> Mint Cyber Artifact</>
+          <><Upload className="w-4 h-4" /> Mint Artifact</>
         )}
       </button>
     </form>

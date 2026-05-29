@@ -3,6 +3,7 @@
 import type { NftToken, MarketplaceListing } from "@/types/api";
 import { NftCard } from "./nft-card";
 import { ImageOff } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface NftGridProps {
   nfts: NftToken[];
@@ -29,9 +30,9 @@ export function NftGrid({
 
   if (nfts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[var(--color-foreground-muted)]">
-        <ImageOff className="w-12 h-12 mb-4 opacity-40" />
-        <p className="text-lg">{emptyMessage}</p>
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-card/42 py-20 text-muted-foreground">
+        <ImageOff className="opacity-50" />
+        <p className="text-center text-sm">{emptyMessage}</p>
       </div>
     );
   }
@@ -59,11 +60,11 @@ export function NftGrid({
 
 function SkeletonCard() {
   return (
-    <div className="glass overflow-hidden">
-      <div className="aspect-square skeleton" />
-      <div className="p-4 space-y-2">
-        <div className="skeleton h-4 w-3/4 rounded" />
-        <div className="skeleton h-3 w-1/2 rounded" />
+    <div className="overflow-hidden rounded-xl border border-border bg-card/72">
+      <Skeleton className="aspect-square rounded-none" />
+      <div className="flex flex-col gap-2 p-4">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
       </div>
     </div>
   );

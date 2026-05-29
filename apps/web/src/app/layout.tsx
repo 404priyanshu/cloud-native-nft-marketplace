@@ -1,32 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-sans",
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
 export const metadata: Metadata = {
-  title: "BlockForge — Cyber NFT Marketplace",
+  title: "BlockForge Market — Cloud-Native NFT Exchange",
   description:
-    "A cloud-native dynamic NFT marketplace. Mint, list, buy, and trade unique cyber artifacts with on-chain transparency.",
+    "A production-style NFT marketplace where Solidity contracts settle ownership and a cloud-native indexer serves the read model.",
   keywords: ["NFT", "marketplace", "blockchain", "ethereum", "solidity", "web3"],
   authors: [{ name: "BlockForge" }],
   openGraph: {
-    title: "BlockForge — NFT Marketplace",
-    description: "Mint, list, buy, and trade unique cyber artifacts.",
+    title: "BlockForge Market",
+    description: "A cloud-native marketplace with on-chain settlement and indexed reads.",
     type: "website",
   },
 };
@@ -37,11 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
-      <body className="min-h-dvh w-full flex flex-col bg-[var(--color-space-black)] text-[#f3f4f6] font-sans antialiased">
+    <html lang="en">
+      <body className="min-h-dvh w-full flex flex-col bg-background text-foreground antialiased relative">
         <Providers>
           <Navbar />
-          <main className="w-full max-w-full flex-1 pt-24">{children}</main>
+          <main className="w-full max-w-full flex-1 pt-24 pb-16 relative z-10">
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

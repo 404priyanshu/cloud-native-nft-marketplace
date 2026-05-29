@@ -43,18 +43,50 @@ console.log("Buyer:", buyer.account.address);
 console.log("NFT:", nft.address);
 console.log("Marketplace:", marketplace.address);
 
-const firstMint = await nft.write.mintNFT(["s3://blockforge/local-sold.json"], {
+type DemoMetadata = {
+  description: string;
+  image: string;
+  name: string;
+};
+
+function tokenMetadataUri(metadata: DemoMetadata) {
+  return `data:application/json;base64,${Buffer.from(
+    JSON.stringify(metadata),
+  ).toString("base64")}`;
+}
+
+const demoTokens = [
+  {
+    description:
+      "An emerald green swirling plasma orb suspended in a sleek chrome sci-fi chamber, hyper-detailed mechanical details, futuristic 3D render.",
+    image: "/images/mockup_nft_3.jpg",
+    name: "Aether Catalyst #01",
+  },
+  {
+    description:
+      "A cosmic purple and magenta holographic shield with glowing neon circuit patterns, sci-fi energy shield, futuristic blockchain artifact.",
+    image: "/images/mockup_nft_2.jpg",
+    name: "Nebula Shield #02",
+  },
+  {
+    description:
+      "A high-tech glowing blue holographic crystal floating in a dark sci-fi background, premium digital asset design, extremely high details.",
+    image: "/images/mockup_nft_1.jpg",
+    name: "Crystal Core #03",
+  },
+] satisfies DemoMetadata[];
+
+const firstMint = await nft.write.mintNFT([tokenMetadataUri(demoTokens[0])], {
   account: seller.account,
 });
 await publicClient.waitForTransactionReceipt({ hash: firstMint });
 
-const secondMint = await nft.write.mintNFT(
-  ["s3://blockforge/local-cancelled.json"],
-  { account: seller.account },
-);
+const secondMint = await nft.write.mintNFT([tokenMetadataUri(demoTokens[1])], {
+  account: seller.account,
+});
 await publicClient.waitForTransactionReceipt({ hash: secondMint });
 
-const thirdMint = await nft.write.mintNFT(["s3://blockforge/local-active.json"], {
+const thirdMint = await nft.write.mintNFT([tokenMetadataUri(demoTokens[2])], {
   account: seller.account,
 });
 await publicClient.waitForTransactionReceipt({ hash: thirdMint });
