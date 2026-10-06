@@ -1,5 +1,7 @@
 # BlockForge — Cloud-Native NFT Marketplace
 
+> **Alternate BlockForge implementation.** The featured portfolio project is [BlockForgeNFT](https://github.com/404priyanshu/BlockForgeNFT). This variant explores a separate polling worker, cursor-based indexing, and Redis coordination; its setup and architecture apply to this repository.
+
 A full-stack, cloud-native NFT marketplace demonstrating production-grade architecture with smart contracts as the source of truth, an event-driven blockchain indexer, a RESTful API, and a modern React frontend.
 
 ![Solidity](https://img.shields.io/badge/Solidity-0.8.28-363636?logo=solidity)
